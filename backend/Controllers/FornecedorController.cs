@@ -1,6 +1,7 @@
 using backend.Data;
 using backend.DTOs;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace backend.Controllers;
 public class FornecedorController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly CnpjValidator _cnpjValidator;
 
-    public FornecedorController(AppDbContext context)
+    public FornecedorController(AppDbContext context, CnpjValidator cnpjValidator)
     {
         _context = context;
+        _cnpjValidator = cnpjValidator;
     }
 
     [HttpPost]
@@ -26,6 +29,11 @@ public class FornecedorController : ControllerBase
         }
 
         var cnpjLimpo = new string(request.Cnpj.Where(char.IsDigit).ToArray());
+
+        if (!_cnpjValidator.Validar(cnpjLimpo))
+        {
+            return BadRequest(new { message = "O CNPJ informado e invalido." });
+        }
 
         var cnpjJaExiste = await _context.Fornecedores
             .AnyAsync(f => f.Cnpj == cnpjLimpo);
@@ -46,7 +54,7 @@ public class FornecedorController : ControllerBase
             Cidade = request.Cidade,
             Uf = request.Uf,
             AtividadePrincipal = request.AtividadePrincipal,
-            SenhaHash = request.Senha,
+            SenhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha),
             SituacaoCadastral = request.SituacaoCadastral ?? "Ativa",
             DataCadastro = DateTime.UtcNow,
             DataAtualizacao = DateTime.UtcNow
