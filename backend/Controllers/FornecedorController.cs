@@ -91,6 +91,46 @@ public class FornecedorController : ControllerBase
         return Ok(MapearParaResponse(fornecedor));
     }
 
+    [Authorize]
+    [HttpPut("me")]
+    public async Task<IActionResult> AtualizarMeusDados([FromBody] FornecedorUpdateRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var cnpj = User.Claims.FirstOrDefault(c => c.Type == "cnpj")?.Value;
+
+        if (cnpj == null)
+        {
+            return Unauthorized(new { message = "Nao foi possivel identificar o fornecedor autenticado." });
+        }
+
+        var fornecedor = await _context.Fornecedores
+            .FirstOrDefaultAsync(f => f.Cnpj == cnpj);
+
+        if (fornecedor == null)
+        {
+            return NotFound(new { message = "Fornecedor nao encontrado." });
+        }
+
+        fornecedor.RazaoSocial = request.RazaoSocial;
+        fornecedor.NomeFantasia = request.NomeFantasia;
+        fornecedor.Email = request.Email;
+        fornecedor.Telefone = request.Telefone;
+        fornecedor.Endereco = request.Endereco;
+        fornecedor.Cidade = request.Cidade;
+        fornecedor.Uf = request.Uf;
+        fornecedor.AtividadePrincipal = request.AtividadePrincipal;
+        fornecedor.SituacaoCadastral = request.SituacaoCadastral;
+        fornecedor.DataAtualizacao = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(MapearParaResponse(fornecedor));
+    }
+
     private static FornecedorResponse MapearParaResponse(Fornecedor fornecedor)
     {
         return new FornecedorResponse

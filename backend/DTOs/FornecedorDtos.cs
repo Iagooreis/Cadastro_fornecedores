@@ -67,3 +67,36 @@ public class FornecedorResponse
     public DateTime DataCadastro { get; set; }
     public DateTime? DataAtualizacao { get; set; }
 }
+
+public class FornecedorUpdateRequest
+{
+    [Required(ErrorMessage = "A razao social e obrigatoria.")]
+    [StringLength(200)]
+    public string RazaoSocial { get; set; } = string.Empty;
+
+    [StringLength(200)]
+    public string? NomeFantasia { get; set; }
+
+    [Required(ErrorMessage = "O e-mail e obrigatorio.")]
+    [EmailAddress(ErrorMessage = "O e-mail informado nao e valido.")]
+    [StringLength(150)]
+    public string Email { get; set; } = string.Empty;
+
+    [StringLength(20)]
+    public string? Telefone { get; set; }
+
+    [StringLength(300)]
+    public string? Endereco { get; set; }
+
+    [StringLength(100)]
+    public string? Cidade { get; set; }
+
+    [StringLength(2)]
+    public string? Uf { get; set; }
+
+    [StringLength(300)]
+    public string? AtividadePrincipal { get; set; }
+
+    [StringLength(50)]
+    public string? SituacaoCadastral { get; set; }
+}
