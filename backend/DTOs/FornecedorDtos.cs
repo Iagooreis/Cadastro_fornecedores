@@ -2,6 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.DTOs;
 
+public class LoginRequest
+{
+    [Required(ErrorMessage = "O CNPJ e obrigatorio.")]
+    public string Cnpj { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "A senha e obrigatoria.")]
+    public string Senha { get; set; } = string.Empty;
+}
 public class FornecedorCreateRequest
 {
     [Required(ErrorMessage = "O CNPJ e obrigatorio.")]
