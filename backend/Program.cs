@@ -40,6 +40,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddSingleton<CnpjValidator>();
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddHttpClient<BrasilApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://brasilapi.com.br/");
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
