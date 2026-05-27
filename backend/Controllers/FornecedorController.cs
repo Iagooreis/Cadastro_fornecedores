@@ -4,6 +4,7 @@ using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
@@ -66,6 +67,28 @@ public class FornecedorController : ControllerBase
         var response = MapearParaResponse(fornecedor);
 
         return CreatedAtAction(nameof(Criar), new { id = fornecedor.Id }, response);
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> ObterMeusDados()
+    {
+        var cnpj = User.Claims.FirstOrDefault(c => c.Type == "cnpj")?.Value;
+
+        if (cnpj == null)
+        {
+            return Unauthorized(new { message = "Nao foi possivel identificar o fornecedor autenticado." });
+        }
+
+        var fornecedor = await _context.Fornecedores
+            .FirstOrDefaultAsync(f => f.Cnpj == cnpj);
+
+        if (fornecedor == null)
+        {
+            return NotFound(new { message = "Fornecedor nao encontrado." });
+        }
+
+        return Ok(MapearParaResponse(fornecedor));
     }
 
     private static FornecedorResponse MapearParaResponse(Fornecedor fornecedor)

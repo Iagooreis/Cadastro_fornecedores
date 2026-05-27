@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.DTOs;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,12 @@ namespace backend.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly TokenService _tokenService;
 
-    public AuthController(AppDbContext context)
+    public AuthController(AppDbContext context, TokenService tokenService)
     {
         _context = context;
+        _tokenService = tokenService;
     }
 
     [HttpPost("login")]
@@ -41,16 +44,17 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "CNPJ ou senha invalidos." });
         }
 
+        var token = _tokenService.GerarToken(
+    fornecedor.Cnpj,
+    fornecedor.RazaoSocial,
+    "Fornecedor"
+);
+
         return Ok(new
         {
-            message = "Login realizado com sucesso.",
-            fornecedor = new
-            {
-                fornecedor.Id,
-                fornecedor.Cnpj,
-                fornecedor.RazaoSocial,
-                fornecedor.Email
-            }
+            token,
+            nome = fornecedor.RazaoSocial,
+            role = "Fornecedor"
         });
     }
 }
