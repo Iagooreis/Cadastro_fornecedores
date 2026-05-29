@@ -33,24 +33,46 @@ public class CnpjController : ControllerBase
 
         var resultado = await _brasilApiService.ConsultarCnpjAsync(cnpjLimpo);
 
-        if (resultado == null)
+        if (!resultado.Sucesso || resultado.Dados == null)
         {
-            return NotFound(new { message = "Nao foi possivel consultar o CNPJ informado." });
+            if (resultado.StatusCode == 404)
+            {
+                return NotFound(new { message = "CNPJ nao encontrado na BrasilAPI." });
+            }
+
+            if (resultado.StatusCode == 429)
+            {
+                return StatusCode(429, new { message = "Limite de consultas da BrasilAPI atingido. Tente novamente mais tarde." });
+            }
+
+            if (resultado.StatusCode == 503)
+            {
+                return StatusCode(503, new { message = "BrasilAPI indisponivel no momento. Tente novamente mais tarde." });
+            }
+
+            if (resultado.StatusCode == 504)
+            {
+                return StatusCode(504, new { message = "Tempo limite excedido ao consultar a BrasilAPI." });
+            }
+
+            return StatusCode(502, new { message = "Erro ao consultar servico externo de CNPJ." });
         }
+
+        var dados = resultado.Dados;
 
         var resposta = new
         {
-            cnpj = resultado.Cnpj,
-            razaoSocial = resultado.RazaoSocial,
-            nomeFantasia = resultado.NomeFantasia,
-            situacaoCadastral = resultado.SituacaoCadastral,
-            atividadePrincipal = resultado.AtividadePrincipal,
-            endereco = FormatarEndereco(resultado),
-            cidade = resultado.Municipio,
-            uf = resultado.Uf,
-            cep = resultado.Cep,
-            telefone = resultado.Telefone,
-            email = resultado.Email
+            cnpj = dados.Cnpj,
+            razaoSocial = dados.RazaoSocial,
+            nomeFantasia = dados.NomeFantasia,
+            situacaoCadastral = dados.SituacaoCadastral,
+            atividadePrincipal = dados.AtividadePrincipal,
+            endereco = FormatarEndereco(dados),
+            cidade = dados.Municipio,
+            uf = dados.Uf,
+            cep = dados.Cep,
+            telefone = dados.Telefone,
+            email = dados.Email
         };
 
         return Ok(resposta);
@@ -61,16 +83,24 @@ public class CnpjController : ControllerBase
         var partes = new List<string>();
 
         if (!string.IsNullOrWhiteSpace(dados.Logradouro))
+        {
             partes.Add(dados.Logradouro);
+        }
 
         if (!string.IsNullOrWhiteSpace(dados.Numero))
+        {
             partes.Add(dados.Numero);
+        }
 
         if (!string.IsNullOrWhiteSpace(dados.Complemento))
+        {
             partes.Add(dados.Complemento);
+        }
 
         if (!string.IsNullOrWhiteSpace(dados.Bairro))
+        {
             partes.Add(dados.Bairro);
+        }
 
         return string.Join(", ", partes);
     }

@@ -46,6 +46,19 @@ builder.Services.AddHttpClient<BrasilApiService>(client =>
     client.Timeout = TimeSpan.FromSeconds(15);
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "http://localhost:5173"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
@@ -58,6 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("PermitirFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -21,7 +21,12 @@ public class TokenService
 
         var issuer = _configuration["Jwt:Issuer"] ?? "FornecedorAPI";
         var audience = _configuration["Jwt:Audience"] ?? "FornecedorApp";
-        var expireMinutes = int.Parse(_configuration["Jwt:ExpireMinutes"] ?? "60");
+        var expireMinutesConfig = _configuration["Jwt:ExpireMinutes"];
+
+        if (!int.TryParse(expireMinutesConfig, out var expireMinutes))
+        {
+            expireMinutes = 60;
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

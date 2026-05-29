@@ -66,7 +66,7 @@ public class FornecedorController : ControllerBase
 
         var response = MapearParaResponse(fornecedor);
 
-        return CreatedAtAction(nameof(Criar), new { id = fornecedor.Id }, response);
+        return Created($"/api/fornecedor/{fornecedor.Id}", response);
     }
 
     [Authorize]
@@ -123,8 +123,8 @@ public class FornecedorController : ControllerBase
         fornecedor.Cidade = request.Cidade;
         fornecedor.Uf = request.Uf;
         fornecedor.AtividadePrincipal = request.AtividadePrincipal;
-        fornecedor.SituacaoCadastral = request.SituacaoCadastral;
         fornecedor.DataAtualizacao = DateTime.UtcNow;
+        
 
         await _context.SaveChangesAsync();
 

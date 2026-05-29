@@ -13,7 +13,7 @@ public class LoginRequest
 public class FornecedorCreateRequest
 {
     [Required(ErrorMessage = "O CNPJ e obrigatorio.")]
-    [StringLength(14, MinimumLength = 14, ErrorMessage = "O CNPJ deve ter exatamente 14 digitos.")]
+    [StringLength(18, MinimumLength = 14, ErrorMessage = "O CNPJ deve ter entre 14 e 18 caracteres.")]
     public string Cnpj { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A razao social e obrigatoria.")]
@@ -97,6 +97,5 @@ public class FornecedorUpdateRequest
     [StringLength(300)]
     public string? AtividadePrincipal { get; set; }
 
-    [StringLength(50)]
-    public string? SituacaoCadastral { get; set; }
+    
 }

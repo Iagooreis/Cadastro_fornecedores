@@ -3,6 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace backend.Services;
 
+public class BrasilApiResult
+{
+    public bool Sucesso { get; set; }
+    public int StatusCode { get; set; }
+    public string? MensagemErro { get; set; }
+    public BrasilApiCnpjResponse? Dados { get; set; }
+}
+
 public class BrasilApiService
 {
     private readonly HttpClient _httpClient;
@@ -12,37 +20,66 @@ public class BrasilApiService
         _httpClient = httpClient;
     }
 
-    public async Task<BrasilApiCnpjResponse?> ConsultarCnpjAsync(string cnpj)
+    public async Task<BrasilApiResult> ConsultarCnpjAsync(string cnpj)
     {
         try
         {
             cnpj = new string(cnpj.Where(char.IsDigit).ToArray());
 
-            var url = $"https://brasilapi.com.br/api/cnpj/v1/{cnpj}";
-
-            var response = await _httpClient.GetAsync(url);
+            var response = await _httpClient.GetAsync($"api/cnpj/v1/{cnpj}");
+            var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
-                var erro = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"BrasilAPI erro: {(int)response.StatusCode} - {erro}");
-                return null;
+                return new BrasilApiResult
+                {
+                    Sucesso = false,
+                    StatusCode = (int)response.StatusCode,
+                    MensagemErro = content
+                };
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonSerializer.Deserialize<BrasilApiCnpjResponse>(
+            var dados = JsonSerializer.Deserialize<BrasilApiCnpjResponse>(
                 content,
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 }
             );
+
+            return new BrasilApiResult
+            {
+                Sucesso = true,
+                StatusCode = (int)response.StatusCode,
+                Dados = dados
+            };
+        }
+        catch (TaskCanceledException)
+        {
+            return new BrasilApiResult
+            {
+                Sucesso = false,
+                StatusCode = 504,
+                MensagemErro = "Tempo limite excedido ao consultar a BrasilAPI."
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            return new BrasilApiResult
+            {
+                Sucesso = false,
+                StatusCode = 503,
+                MensagemErro = ex.Message
+            };
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao consultar BrasilAPI: {ex.Message}");
-            return null;
+            return new BrasilApiResult
+            {
+                Sucesso = false,
+                StatusCode = 500,
+                MensagemErro = ex.Message
+            };
         }
     }
 }
