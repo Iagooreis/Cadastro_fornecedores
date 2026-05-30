@@ -17,7 +17,7 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:5260/api/auth';
+  private readonly apiUrl = '/api/auth';
   private readonly tokenKey = 'fornecedor_token';
   private readonly roleKey = 'fornecedor_role';
   private readonly nomeKey = 'fornecedor_nome';

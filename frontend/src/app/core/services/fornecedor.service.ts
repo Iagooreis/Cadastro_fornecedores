@@ -47,7 +47,7 @@ export interface FornecedorUpdateRequest {
   providedIn: 'root'
 })
 export class FornecedorService {
-  private readonly apiUrl = 'http://localhost:5260/api/fornecedor';
+  private readonly apiUrl = '/api/fornecedor';
 
   constructor(private http: HttpClient) {}
 
@@ -62,10 +62,9 @@ export class FornecedorService {
   atualizarMeusDados(dados: FornecedorUpdateRequest): Observable<FornecedorResponse> {
     return this.http.put<FornecedorResponse>(`${this.apiUrl}/me`, dados);
   }
-  
+
   listarFornecedores(): Observable<FornecedorResponse[]> {
-  return this.http.get<FornecedorResponse[]>('http://localhost:5260/api/admin/fornecedores');
-}
+  return this.http.get<FornecedorResponse[]>('/api/admin/fornecedores');
 
 
-}
+}}

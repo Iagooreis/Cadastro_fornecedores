@@ -20,7 +20,7 @@ export interface CnpjResponse {
   providedIn: 'root'
 })
 export class CnpjService {
-  private readonly apiUrl = 'http://localhost:5260/api/cnpj';
+  private readonly apiUrl = '/api/cnpj';
 
   constructor(private http: HttpClient) {}
 
