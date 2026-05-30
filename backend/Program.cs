@@ -79,4 +79,31 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    var tentativas = 0;
+    var bancoMigrado = false;
+
+    while (!bancoMigrado && tentativas < 10)
+    {
+        try
+        {
+            db.Database.Migrate();
+            bancoMigrado = true;
+        }
+        catch (Exception)
+        {
+            tentativas++;
+            Thread.Sleep(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    if (!bancoMigrado)
+    {
+        throw new Exception("Nao foi possivel aplicar as migrations no banco de dados.");
+    }
+}
+
 app.Run();

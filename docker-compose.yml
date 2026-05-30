@@ -1,0 +1,48 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: fornecedor-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Fornecedor@12345"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Fornecedor@12345' -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: fornecedor-backend
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=FornecedorDB;User Id=sa;Password=Fornecedor@12345;TrustServerCertificate=True;"
+      Jwt__Key: "ChaveSuperSecretaParaDockerFornecedor2026!PrecisaSerGrande"
+      Jwt__Issuer: "FornecedorAPI"
+      Jwt__Audience: "FornecedorApp"
+      Jwt__ExpireMinutes: "60"
+      Admin__User: "admin"
+      Admin__Password: "admin123"
+    ports:
+      - "5260:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: fornecedor-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  sqlserver_data:
