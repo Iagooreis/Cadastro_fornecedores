@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import {
   FornecedorResponse,
   FornecedorService,
   FornecedorUpdateRequest
 } from '../../core/services/fornecedor.service';
-import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-area-restrita',
@@ -36,8 +34,7 @@ export class AreaRestritaComponent implements OnInit {
 
   constructor(
     private fornecedorService: FornecedorService,
-    private authService: AuthService,
-    private router: Router
+ 
   ) {}
 
   ngOnInit(): void {
@@ -88,8 +85,5 @@ export class AreaRestritaComponent implements OnInit {
     });
   }
 
-  sair(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  
 }

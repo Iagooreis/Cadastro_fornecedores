@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
 import { FornecedorResponse, FornecedorService } from '../../core/services/fornecedor.service';
 
 @Component({
@@ -18,8 +16,7 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private fornecedorService: FornecedorService,
-    private authService: AuthService,
-    private router: Router
+    
   ) {}
 
   ngOnInit(): void {
@@ -42,8 +39,5 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  sair(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  
 }

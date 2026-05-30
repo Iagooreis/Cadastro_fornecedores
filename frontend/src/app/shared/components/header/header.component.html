@@ -1,1 +1,14 @@
-<p>header works!</p>
+<header class="header">
+  <a class="brand" routerLink="/cadastro">Fornecedor</a>
+
+  <nav>
+    <a routerLink="/cadastro">Cadastro</a>
+    <a routerLink="/login" *ngIf="!authService.estaAutenticado()">Login</a>
+    <a routerLink="/area-restrita" *ngIf="role === 'Fornecedor'">Minha area</a>
+    <a routerLink="/admin" *ngIf="role === 'Admin'">Admin</a>
+
+    <button type="button" *ngIf="authService.estaAutenticado()" (click)="sair()">
+      Sair
+    </button>
+  </nav>
+</header>
