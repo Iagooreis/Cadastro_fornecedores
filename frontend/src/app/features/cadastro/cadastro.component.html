@@ -1,0 +1,87 @@
+<main class="page">
+  <section class="panel">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">Cadastro de fornecedor</span>
+        <h1>Criar acesso</h1>
+      </div>
+
+      <a routerLink="/login">Entrar</a>
+    </div>
+
+    <form (ngSubmit)="cadastrar()" #form="ngForm" class="form">
+      <div class="field cnpj-row">
+        <label for="cnpj">CNPJ</label>
+        <div class="inline">
+          <input
+            id="cnpj"
+            name="cnpj"
+            type="text"
+            [(ngModel)]="fornecedor.cnpj"
+            required
+            maxlength="18"
+            placeholder="00.000.000/0000-00"
+          />
+
+          <button type="button" (click)="consultarCnpj()" [disabled]="carregandoCnpj">
+            {{ carregandoCnpj ? 'Consultando...' : 'Consultar' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <label class="field">
+          Razao social
+          <input name="razaoSocial" [(ngModel)]="fornecedor.razaoSocial" required />
+        </label>
+
+        <label class="field">
+          Nome fantasia
+          <input name="nomeFantasia" [(ngModel)]="fornecedor.nomeFantasia" />
+        </label>
+
+        <label class="field">
+          E-mail
+          <input name="email" type="email" [(ngModel)]="fornecedor.email" required />
+        </label>
+
+        <label class="field">
+          Telefone
+          <input name="telefone" [(ngModel)]="fornecedor.telefone" />
+        </label>
+
+        <label class="field wide">
+          Endereco
+          <input name="endereco" [(ngModel)]="fornecedor.endereco" />
+        </label>
+
+        <label class="field">
+          Cidade
+          <input name="cidade" [(ngModel)]="fornecedor.cidade" />
+        </label>
+
+        <label class="field">
+          UF
+          <input name="uf" maxlength="2" [(ngModel)]="fornecedor.uf" />
+        </label>
+
+        <label class="field wide">
+          Atividade principal
+          <input name="atividadePrincipal" [(ngModel)]="fornecedor.atividadePrincipal" />
+        </label>
+
+        <label class="field">
+          Senha
+          <input name="senha" type="password" minlength="6" [(ngModel)]="fornecedor.senha" required />
+        </label>
+      </div>
+
+      <p class="success" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+      <p class="error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+
+      <button class="submit" type="submit" [disabled]="form.invalid || enviando">
+        {{ enviando ? 'Cadastrando...' : 'Cadastrar fornecedor' }}
+      </button>
+    </form>
+  </section>
+</main>
