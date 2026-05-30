@@ -1,1 +1,70 @@
-<p>area-restrita works!</p>
+<main class="page">
+  <section class="panel">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">Area restrita</span>
+        <h1>Meus dados</h1>
+      </div>
+
+      <button type="button" (click)="sair()">Sair</button>
+    </div>
+
+    <p class="loading" *ngIf="carregando">Carregando dados...</p>
+
+    <form *ngIf="!carregando && fornecedor" class="form" (ngSubmit)="salvar()" #formRef="ngForm">
+      <div class="readonly">
+        <span>CNPJ</span>
+        <strong>{{ fornecedor.cnpj }}</strong>
+      </div>
+
+      <div class="grid">
+        <label class="field">
+          Razao social
+          <input name="razaoSocial" [(ngModel)]="form.razaoSocial" required />
+        </label>
+
+        <label class="field">
+          Nome fantasia
+          <input name="nomeFantasia" [(ngModel)]="form.nomeFantasia" />
+        </label>
+
+        <label class="field">
+          E-mail
+          <input name="email" type="email" [(ngModel)]="form.email" required />
+        </label>
+
+        <label class="field">
+          Telefone
+          <input name="telefone" [(ngModel)]="form.telefone" />
+        </label>
+
+        <label class="field wide">
+          Endereco
+          <input name="endereco" [(ngModel)]="form.endereco" />
+        </label>
+
+        <label class="field">
+          Cidade
+          <input name="cidade" [(ngModel)]="form.cidade" />
+        </label>
+
+        <label class="field">
+          UF
+          <input name="uf" maxlength="2" [(ngModel)]="form.uf" />
+        </label>
+
+        <label class="field wide">
+          Atividade principal
+          <input name="atividadePrincipal" [(ngModel)]="form.atividadePrincipal" />
+        </label>
+      </div>
+
+      <p class="success" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+      <p class="error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+
+      <button class="submit" type="submit" [disabled]="formRef.invalid || salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar alteracoes' }}
+      </button>
+    </form>
+  </section>
+</main>

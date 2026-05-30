@@ -1,1 +1,41 @@
-<p>login works!</p>
+<main class="page">
+  <section class="panel">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">Acesso</span>
+        <h1>Entrar</h1>
+      </div>
+
+      <a routerLink="/cadastro">Criar cadastro</a>
+    </div>
+
+    <form class="form" (ngSubmit)="entrar()" #form="ngForm">
+      <label class="field">
+        CNPJ ou admin
+        <input
+          name="cnpj"
+          type="text"
+          [(ngModel)]="cnpj"
+          required
+          placeholder="00.000.000/0000-00"
+        />
+      </label>
+
+      <label class="field">
+        Senha
+        <input
+          name="senha"
+          type="password"
+          [(ngModel)]="senha"
+          required
+        />
+      </label>
+
+      <p class="error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+
+      <button class="submit" type="submit" [disabled]="form.invalid || carregando">
+        {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+  </section>
+</main>
