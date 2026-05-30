@@ -25,6 +25,7 @@ export class CnpjService {
   constructor(private http: HttpClient) {}
 
   consultar(cnpj: string): Observable<CnpjResponse> {
-    return this.http.get<CnpjResponse>(`${this.apiUrl}/${cnpj}`);
+  const cnpjLimpo = cnpj.replace(/\D/g, '');
+  return this.http.get<CnpjResponse>(`${this.apiUrl}/${cnpjLimpo}`);
   }
 }
