@@ -12,29 +12,32 @@ public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly TokenService _tokenService;
-    private const string AdminSenha = "admin123";
+    private readonly IConfiguration _configuration;
 
-    public AuthController(AppDbContext context, TokenService tokenService)
+    public AuthController(
+        AppDbContext context,
+        TokenService tokenService,
+        IConfiguration configuration)
     {
         _context = context;
         _tokenService = tokenService;
+        _configuration = configuration;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        if (!ModelState.IsValid)
+        var adminUser = _configuration["Admin:User"] ?? "admin";
+        var adminPassword = _configuration["Admin:Password"] ?? "admin123";
+
+        if (request.Cnpj.Equals(adminUser, StringComparison.OrdinalIgnoreCase))
         {
-            return BadRequest(ModelState);
-        }
-        if (request.Cnpj.Equals("admin", StringComparison.OrdinalIgnoreCase))
-        {
-            if (request.Senha != AdminSenha)
+            if (request.Senha != adminPassword)
             {
                 return Unauthorized(new { message = "CNPJ ou senha invalidos." });
             }
 
-            var adminToken = _tokenService.GerarToken("admin", "Administrador", "Admin");
+            var adminToken = _tokenService.GerarToken(adminUser, "Administrador", "Admin");
 
             return Ok(new
             {
