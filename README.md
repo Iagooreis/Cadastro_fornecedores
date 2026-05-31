@@ -126,7 +126,7 @@ Observação: `docker compose down` mantém os dados do banco no volume Docker. 
 
 #### Pré-requisitos
 
-- .NET SDK
+- .NET SDK 10
 - SQL Server ou SQL Server Express
 - Banco FornecedorDB criado localmente
 
@@ -278,6 +278,8 @@ Em um ambiente real de produção, essas informações deveriam ser armazenadas 
 - serviços gerenciados da plataforma de deploy.
 
 A senha dos fornecedores não é armazenada em texto puro. Ela é salva usando BCrypt.
+
+O token JWT é armazenado no localStorage no frontend por simplicidade do desafio. Em produção, pode ser substituída por cookies HttpOnly ou outra abordagem.
 
 ## Decisões Técnicas
 
